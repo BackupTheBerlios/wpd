@@ -1,3 +1,6 @@
+# Copyright 1999-2004 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/wpd/Repository/wpd-0.0/wpd.ebuild.in,v 1.2 2005/02/27 20:20:45 gardiol Exp $
 
 inherit eutils flag-o-matic eutils
 

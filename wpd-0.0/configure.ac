@@ -7,7 +7,7 @@ AC_CONFIG_HEADERS([config.h])
 
 WPD_MAJOR=0
 WPD_MINOR=7
-WPD_SUB=5
+WPD_SUB=6
 
 DEFCONF_PORT=1978
 DEFCONF_NSOCKETS=10
@@ -99,10 +99,6 @@ then
 			echo > $ebuild
 
 		fi
-
-		echo '# Copyright 1999-2004 Gentoo Foundation' > $ebuild
-		echo '# Distributed under the terms of the GNU General Public License v2' >> $ebuild
-		echo '# $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/wpd/Repository/wpd-0.0/configure.ac,v 1.2 2005/02/27 20:13:03 gardiol Exp $version'.ebuild,v 0.4 2004/07/28 00:11:12 vapier Exp $' >> $ebuild
 
 		cat wpd.ebuild.in >> $ebuild
 		echo Created $ebuild

@@ -169,10 +169,10 @@ Posting to the list is open, if you do not want to subscribe you can just write 
 </td></tr></table>
 <br>
 <br>
-<br><center>Dowload source code: <a href="http://www.gardiol.org/wpd/wpd-0.7.5.tar.gz">wpd-0.7.5.tar.gz (330kb)</a></center>
+<br><center>Dowload source code: <a href="http://www.gardiol.org/wpd/wpd-0.7.6.tar.gz">wpd-0.7.6.tar.gz (330kb)</a></center>
 <br>
 <br>
-<br><center>Dowload Gentoo EBUILD: <a href="http://www.gardiol.org/wpd/wpd-0.7.5.ebuild">wpd-0.7.5.tar.ebuild (1kb)</a></center>
+<br><center>Dowload Gentoo EBUILD: <a href="http://www.gardiol.org/wpd/wpd-0.7.6.ebuild">wpd-0.7.6.tar.ebuild (1kb)</a></center>
 <br>
 <br>
 <br>
