@@ -9,7 +9,7 @@ libwpdmon_la_LDFLAGS =							\
 	-module \
 	-L../src -lwpd
 
-dist_libwpdmon_la_SOURCES =							\
+libwpdmon_la_SOURCES =							\
 	wpdmon.c \
 	rich_progress_bar.c \
 	rich_progress_bar.h \

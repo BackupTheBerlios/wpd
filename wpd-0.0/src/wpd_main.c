@@ -494,9 +494,9 @@ int main( int argc, char *argv[] )
 		case 'c':
 			/* Setup a special config file instead of the default one */
 			if ( strlen(optarg) > BUFFER_LEN )
-				strcpy( config_file, "" );
+				config_file[0] = '\0';
 			else
-				strcpy( config_file, optarg );
+				strncpy( config_file, optarg, BUFFER_LEN );
 			break;
 			
 		case 'h':

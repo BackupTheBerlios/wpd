@@ -2,13 +2,13 @@
 #include "wpd.h"
 
 /* defines to simplify searches in files */
-#define PRESENT_RATE_STR    "present rate:"
-#define REMAINING_CAPACITY_STR    "remaining capacity:"
-#define CPU_MHZ_STR "cpu MHz"
-#define LAST_FULL_CAPACITY_STR    "last full capacity:"
-#define TEMPERATURE_STR "temperature:"
-#define AC_STATE_STR "state:"
-#define BATTERY_PRESENT_STR "present:"
+#define PRESENT_RATE_STR			"present rate:"
+#define REMAINING_CAPACITY_STR   "remaining capacity:"
+#define CPU_MHZ_STR 					"cpu MHz"
+#define LAST_FULL_CAPACITY_STR   "last full capacity:"
+#define TEMPERATURE_STR 			"temperature:"
+#define AC_STATE_STR 				"state:"
+#define BATTERY_PRESENT_STR 		"present:"
 
 extern struct _conf_data wpd_conf_data;
 
@@ -97,14 +97,15 @@ int collect_battery_info()
 
 void collect_battery_presence( char* str )
 {
-	if ( buffer_file( wpd_conf_data.battery_info) )
+	if ( buffer_file( wpd_conf_data.battery_info ) )
 	{
 		buffer_read_str( BATTERY_PRESENT_STR,str );
 	}
 	else
 	{
-		strcpy( str, "unk");
+		strncpy( str, "unk", 4);
 	}
+	fprintf( wpd_conf_data.output_file, "The battery presence SHOULD be %s:\n", str);
 }
 
 int collect_cpu_data()
@@ -129,7 +130,7 @@ void collect_governor_data( char* governor )
 	}
 	else
 	{
-		strcpy( governor, "unk");
+		strncpy( governor, "unk", 4);
 	}
 }
 
@@ -155,7 +156,7 @@ void collect_ac_state( char* str )
 	}
 	else
 	{
-		strcpy( str, "unk");
+		strncpy( str, "unk", 4);
 	}
 }
 

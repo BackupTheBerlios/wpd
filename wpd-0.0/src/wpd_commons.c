@@ -82,7 +82,7 @@ static int wpd_connect(int port, ERROR* err)
 	struct sockaddr_in pin;
 	struct hostent *hp;
 
-   strcpy(hostname,HOST);
+   strncpy(hostname,HOST, 100);
 
 	if ((hp = gethostbyname(hostname)) == 0) {
 		perror("gethostbyname: ");

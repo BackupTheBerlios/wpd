@@ -2,7 +2,7 @@
 #include "wpd.h"
 
 
-extern char config_file[1024];
+extern char config_file[BUFFER_LEN];
 extern struct _conf_data wpd_conf_data;
 
 
@@ -30,67 +30,67 @@ static int read_arg_value( char* str, int* value )
 		str[len-1] = '\0';
 
 	(*value) = 0;
-	if ( strcmp( str, "port" ) == 0 )
+	if ( strncmp( str, "port", 4 ) == 0 )
 	{
 		(*value) = atoi( &str[pos+1] );
 		return CD_PORT;
 	}
-	else if ( strcmp( str, "n_sockets") == 0 )
+	else if ( strncmp( str, "n_sockets", 9) == 0 )
 	{
 		(*value) = atoi( &str[pos+1] );
 		return CD_N_SOCKETS;
 	}
-	else if ( strcmp( str, "battery_update_freq" ) == 0 )
+	else if ( strncmp( str, "battery_update_freq",19  ) == 0 )
 	{
 		(*value) = atoi( &str[pos+1] );
 		return CD_BATTERY_UPDATE_FREQ;
 	}
-	else if ( strcmp( str, "output_file" ) == 0 )
+	else if ( strncmp( str, "output_file",11 ) == 0 )
 	{
 		memmove( str, &str[pos+1], len-pos );
 		return CD_OUTPUT_FILE;
 	}
-	else if ( strcmp( str, "battery_state" ) == 0 )
+	else if ( strncmp( str, "battery_state",13 ) == 0 )
 	{
 		memmove( str, &str[pos+1], len-pos );
 		return CD_BATTERY_STATE;
 	}
-	else if ( strcmp( str, "battery_info" ) == 0 )
+	else if ( strncmp( str, "battery_info",12 ) == 0 )
 	{
 		memmove( str, &str[pos+1], len-pos );
 		return CD_BATTERY_INFO;
 	}
-	else if ( strcmp( str, "cpu_state" ) == 0 )
+	else if ( strncmp( str, "cpu_state",9 ) == 0 )
 	{
 		memmove( str, &str[pos+1], len-pos );
 		return CD_CPU_STATE;
 	}
-	else if ( strcmp( str, "governor_file" ) == 0 )
+	else if ( strncmp( str, "governor_file",13 ) == 0 )
 	{
 		memmove( str, &str[pos+1], len-pos );
 		return CD_GOVERNOR_FILE;
 	}
-	else if ( strcmp( str, "freq_file" ) == 0 )
+	else if ( strncmp( str, "freq_file",9 ) == 0 )
 	{
 		memmove( str, &str[pos+1], len-pos );
 		return CD_FREQ_FILE;
 	}
-	else if ( strcmp( str, "temp_file" ) == 0 )
+	else if ( strncmp( str, "temp_file",9 ) == 0 )
 	{
 		memmove( str, &str[pos+1], len-pos );
 		return CD_TEMP_FILE;
 	}
-	else if ( strcmp( str, "asus_lcd" ) == 0 )
+	else if ( strncmp( str, "asus_lcd",8 ) == 0 )
 	{
 		memmove( str, &str[pos+1], len-pos );
 		return CD_ASUS_LCD;
 	}
-	else if ( strcmp( str, "asus_disp" ) == 0 )
+	else if ( strncmp( str, "asus_disp",9 ) == 0 )
 	{
 		memmove( str, &str[pos+1], len-pos );
 		return CD_ASUS_DISP;
 	}
-	else if ( strcmp( str, "ac_state" ) == 0 )
+	else if ( strncmp( str, "ac_state",8 ) == 0 )
 	{
 		memmove( str, &str[pos+1], len-pos );
 		return CD_AC_STATE;
@@ -108,9 +108,9 @@ static void store_conf( char* str, int value, int who )
 		break;
 
 	case CD_OUTPUT_FILE:
-		if ( strcmp( "stderr", str ) == 0 )
+		if ( strncmp( "stderr", str,6 ) == 0 )
 			wpd_conf_data.output_file = stderr;
-		else if ( strcmp( "stdout", str ) == 0 )
+		else if ( strncmp( "stdout", str,6 ) == 0 )
 			wpd_conf_data.output_file = stdout;
 		else
 			wpd_conf_data.output_file = fopen( str, "r");
@@ -121,15 +121,15 @@ static void store_conf( char* str, int value, int who )
 		break;
 
 	case CD_BATTERY_STATE:
-		strcpy( wpd_conf_data.battery_state, str );
+		strncpy( wpd_conf_data.battery_state, str, BUFFER_LEN  );
 		break;
 
 	case CD_BATTERY_INFO:
-		strcpy( wpd_conf_data.battery_info, str );
+		strncpy( wpd_conf_data.battery_info, str, BUFFER_LEN );
 		break;
 
 	case CD_CPU_STATE:
-		strcpy( wpd_conf_data.cpu_state, str );
+		strncpy( wpd_conf_data.cpu_state, str, BUFFER_LEN );
 		break;
 
 	case CD_BATTERY_UPDATE_FREQ:
@@ -137,27 +137,27 @@ static void store_conf( char* str, int value, int who )
 		break;
 
 	case CD_GOVERNOR_FILE:
-		strcpy( wpd_conf_data.governor_file, str );
+		strncpy( wpd_conf_data.governor_file, str, BUFFER_LEN );
 		break;
 
 	case CD_FREQ_FILE:
-		strcpy( wpd_conf_data.freq_file, str );
+		strncpy( wpd_conf_data.freq_file, str, BUFFER_LEN );
 		break;
 				
 	case CD_TEMP_FILE:
-		strcpy( wpd_conf_data.temp_file, str );
+		strncpy( wpd_conf_data.temp_file, str, BUFFER_LEN );
 		break;
 		
 	case CD_ASUS_LCD:
-		strcpy( wpd_conf_data.asus_lcd, str );
+		strncpy( wpd_conf_data.asus_lcd, str, BUFFER_LEN );
 		break;
 		
 	case CD_ASUS_DISP:
-		strcpy( wpd_conf_data.asus_disp, str );
+		strncpy( wpd_conf_data.asus_disp, str, BUFFER_LEN );
 		break;
 		
 	case CD_AC_STATE:
-		strcpy( wpd_conf_data.ac_state, str );
+		strncpy( wpd_conf_data.ac_state, str, BUFFER_LEN );
 		break;
 	}
 }
@@ -165,7 +165,7 @@ static void store_conf( char* str, int value, int who )
 /* Parse the configuration file */
 static BOOL read_conf()
 {
-	char * str;
+	char str[BUFFER_LEN];
 	int value, who;
 	FILE* file = fopen( config_file, "r" );
 	if ( file == NULL )
@@ -173,8 +173,6 @@ static BOOL read_conf()
 		return FALSE;
 	}
 
-	str = (char*)malloc( 1024*sizeof(char) );
-	
 	fgets( str, 1024, file );
 
 	while ( !feof(file) )
@@ -187,7 +185,6 @@ static BOOL read_conf()
 		}
 		fgets( str, 1024, file );
 	}
-	free(str);
 	fclose(file);
 	return TRUE;
 }
@@ -226,7 +223,7 @@ static int conf_dir_file_check( char* base_dir, char* check_file, char* conf_str
 {
 	DIR* dir;
 	struct dirent* de;
-	char name[1024];
+	char name[BUFFER_LEN];
 
 	/* check if the base_dir exist and is a directory */
 	if ( dir_exist( base_dir ) )
@@ -239,23 +236,23 @@ static int conf_dir_file_check( char* base_dir, char* check_file, char* conf_str
 			while ( de != NULL )
 			{
 				/* skip . and .. , we do not want to process the entire filesystem */
-				if ( ( strcmp( de->d_name, "." ) != 0 ) &&
-				     ( strcmp( de->d_name, "..") != 0 ) )
+				if ( ( strncmp( de->d_name, ".", 2 ) != 0 ) &&
+				     ( strncmp( de->d_name, "..", 3) != 0 ) )
 				{
-					strcpy( name, base_dir );
-					strcat( name, "/");
-					strcat( name, de->d_name );
+					strncpy( name, base_dir, BUFFER_LEN );
+					strncat( name, "/", 2);
+					strncat( name, de->d_name, NAME_MAX+1 );
 	
 					/* for each subdir (skip files links and similar things) */
 					if ( dir_exist( name ) )
 					{
-						strcat( name, "/");
-						strcat( name, check_file );
+						strncat( name, "/", 2);
+						strncat( name, check_file, BUFFER_LEN );
 
 						/* if the dir/subdir/check_file exists.. */
 						if ( file_exist( name ) )
 						{
-							strcpy( conf_str, name );
+							strncpy( conf_str, name, BUFFER_LEN );
 							closedir(dir);
 							return 1;
 						}
@@ -266,7 +263,7 @@ static int conf_dir_file_check( char* base_dir, char* check_file, char* conf_str
 			closedir( dir );
 		}
 	}
-	strcpy( conf_str, "off" );
+	strncpy( conf_str, "off", 4 );
 	return 0;
 }
 
@@ -280,7 +277,7 @@ static void detect_battery_state_conf()
 		return;
 	
 	
-	if ( strcmp( wpd_conf_data.battery_state, "" ) == 0 )
+	if ( strncmp( wpd_conf_data.battery_state, "", 1 ) == 0 )
 	{
 		if ( conf_dir_file_check( ACPI_BASE"/"ACPI_BATTERY_BASE, 
 			   	   			 		ACPI_BATTERY_STATE, 
@@ -300,7 +297,7 @@ static void detect_ac_state_conf()
 		return;
 	
 	
-	if ( strcmp( wpd_conf_data.ac_state, "" ) == 0 )
+	if ( strncmp( wpd_conf_data.ac_state, "",1 ) == 0 )
 	{
 		if ( conf_dir_file_check( ACPI_BASE"/"ACPI_AC_BASE, 
 			   	   			 		ACPI_AC_STATE, 
@@ -318,7 +315,7 @@ static void detect_battery_info_conf()
 	if ( IS_TURNED_OFF( wpd_conf_data.battery_info ) )
 		return;
 	
-	if ( strcmp( wpd_conf_data.battery_info, "" ) == 0 )
+	if ( strncmp( wpd_conf_data.battery_info, "", 1 ) == 0 )
 	{
 		if ( conf_dir_file_check( ACPI_BASE"/"ACPI_BATTERY_BASE, 
 			   	   			 		ACPI_BATTERY_INFO, 
@@ -336,15 +333,15 @@ static void detect_cpu_state_conf()
 	if ( IS_TURNED_OFF( wpd_conf_data.cpu_state ) )
 		return;
 	
-	if ( strcmp( wpd_conf_data.cpu_state, "" ) == 0 )
+	if ( strncmp( wpd_conf_data.cpu_state, "", 1 ) == 0 )
 	{
 		if ( file_exist( PROC_BASE"/"CPUINFO_FILE  ) )
 		{
-			strcpy( wpd_conf_data.cpu_state, PROC_BASE"/"CPUINFO_FILE );
+			strncpy( wpd_conf_data.cpu_state, PROC_BASE"/"CPUINFO_FILE, BUFFER_LEN );
 		}
 		else
 		{
-			strcpy( wpd_conf_data.cpu_state, "off" );
+			strncpy( wpd_conf_data.cpu_state, "off", 4 );
 			fprintf(wpd_conf_data.output_file, "Unable to detect cpu state file: %s\n", 
 							 							wpd_conf_data.cpu_state );
 		}
@@ -357,15 +354,15 @@ static void detect_governor_file_conf()
 	if ( IS_TURNED_OFF( wpd_conf_data.governor_file ) )
 		return;
 	
-	if ( strcmp( wpd_conf_data.governor_file, "" ) == 0 )
+	if ( strncmp( wpd_conf_data.governor_file, "",1 ) == 0 )
 	{
 		if ( file_exist( CPUFREQ_BASE"/"CPUFREQ_GOVERNOR_FILE  ) )
 		{
-			strcpy( wpd_conf_data.governor_file, CPUFREQ_BASE"/"CPUFREQ_GOVERNOR_FILE );
+			strncpy( wpd_conf_data.governor_file, CPUFREQ_BASE"/"CPUFREQ_GOVERNOR_FILE, BUFFER_LEN );
 		}
 		else
 		{
-			strcpy( wpd_conf_data.governor_file, "off" );
+			strncpy( wpd_conf_data.governor_file, "off",4 );
 			fprintf(wpd_conf_data.output_file, "Unable to detect governor file: %s\n", 
 							 							wpd_conf_data.governor_file );
 		}
@@ -378,15 +375,15 @@ static void detect_freq_file_conf()
 	if ( IS_TURNED_OFF( wpd_conf_data.freq_file ) )
 		return;
 	
-	if ( strcmp( wpd_conf_data.freq_file, "" ) == 0 )
+	if ( strncmp( wpd_conf_data.freq_file, "", 1 ) == 0 )
 	{
 		if ( file_exist( CPUFREQ_BASE"/"CPUFREQ_FREQ_FILE  ) )
 		{
-			strcpy( wpd_conf_data.freq_file, CPUFREQ_BASE"/"CPUFREQ_FREQ_FILE );
+			strncpy( wpd_conf_data.freq_file, CPUFREQ_BASE"/"CPUFREQ_FREQ_FILE, BUFFER_LEN );
 		}
 		else
 		{
-			strcpy( wpd_conf_data.freq_file, "off" );
+			strncpy( wpd_conf_data.freq_file, "off",4 );
 			fprintf(wpd_conf_data.output_file, "Unable to detect freq file: %s\n", 
 							 							wpd_conf_data.freq_file );
 		}
@@ -399,7 +396,7 @@ static void detect_temp_file_conf()
 	if ( IS_TURNED_OFF( wpd_conf_data.temp_file ) )
 		return;
 	
-	if ( strcmp( wpd_conf_data.temp_file, "" ) == 0 )
+	if ( strncmp( wpd_conf_data.temp_file, "",1 ) == 0 )
 	{
 		if ( conf_dir_file_check( ACPI_BASE"/"ACPI_THERMAL_BASE, 
 			   	 			 		ACPI_THERMAL_TEMP, 
@@ -415,8 +412,8 @@ static void detect_asus_conf()
 {
 	if ( !dir_exist( ACPI4ASUS_BASE ) )
 	{
-		strcpy( wpd_conf_data.asus_lcd, "off" );
-		strcpy( wpd_conf_data.asus_disp, "off" );
+		strncpy( wpd_conf_data.asus_lcd, "off",4 );
+		strncpy( wpd_conf_data.asus_disp, "off",4 );
 		fprintf(wpd_conf_data.output_file, "ACPI4ASUS not detected\n" );
 		return;
 	}
@@ -424,15 +421,15 @@ static void detect_asus_conf()
 	/* do not autoconf if the feature has been switched off explicitly */
 	if ( IS_TURNED_OFF( wpd_conf_data.asus_lcd ) == FALSE )
 	{
-		if ( strcmp( wpd_conf_data.asus_lcd, "" ) == 0 )
+		if ( strncmp( wpd_conf_data.asus_lcd, "", 1 ) == 0 )
 		{
 			if ( file_exist( ACPI4ASUS_BASE"/"ACPI4ASUS_LCD ) )
 			{
-				strcpy( wpd_conf_data.asus_lcd, ACPI4ASUS_BASE"/"ACPI4ASUS_LCD );
+				strncpy( wpd_conf_data.asus_lcd, ACPI4ASUS_BASE"/"ACPI4ASUS_LCD, BUFFER_LEN );
 			}
 			else
 			{
-				strcpy( wpd_conf_data.asus_lcd, "off" );
+				strncpy( wpd_conf_data.asus_lcd, "off", 4 );
 				fprintf(wpd_conf_data.output_file, "Unable to detect asus lcd file: %s\n", 
 								 							wpd_conf_data.asus_lcd );
 			}
@@ -442,15 +439,15 @@ static void detect_asus_conf()
 	/* do not autoconf if the feature has been switched off explicitly */
 	if ( IS_TURNED_OFF( wpd_conf_data.asus_disp ) == FALSE )
 	{
-		if ( strcmp( wpd_conf_data.asus_disp, "" ) == 0 )
+		if ( strncmp( wpd_conf_data.asus_disp, "", 1 ) == 0 )
 		{
 			if ( file_exist( ACPI4ASUS_BASE"/"ACPI4ASUS_DISP ) )
 			{
-				strcpy( wpd_conf_data.asus_disp, ACPI4ASUS_BASE"/"ACPI4ASUS_DISP );
+				strncpy( wpd_conf_data.asus_disp, ACPI4ASUS_BASE"/"ACPI4ASUS_DISP, BUFFER_LEN );
 			}
 			else
 			{
-				strcpy( wpd_conf_data.asus_disp, "off" );
+				strncpy( wpd_conf_data.asus_disp, "off", 4 );
 				fprintf(wpd_conf_data.output_file, "Unable to detect asus disp file: %s\n", 
 								 							wpd_conf_data.asus_disp );
 			}
@@ -463,17 +460,17 @@ void LoadConfig()
 	/* Setup the default values */
 	wpd_conf_data.port = DEFCONF_PORT;
 	wpd_conf_data.n_sockets = DEFCONF_NSOCKETS;
-	strcpy(wpd_conf_data.battery_state, "");
-	strcpy(wpd_conf_data.battery_info, "");
-	strcpy(wpd_conf_data.cpu_state, "");
+	strncpy(wpd_conf_data.battery_state, "", 1);
+	strncpy(wpd_conf_data.battery_info, "",1 );
+	strncpy(wpd_conf_data.cpu_state, "",1 );
 	wpd_conf_data.battery_update_freq = DEFCONF_BATTUPDFREQ;
-	strcpy(wpd_conf_data.governor_file, "");
-	strcpy(wpd_conf_data.freq_file, "");
-	strcpy(wpd_conf_data.temp_file, "");
+	strncpy(wpd_conf_data.governor_file, "",1 );
+	strncpy(wpd_conf_data.freq_file, "",1 );
+	strncpy(wpd_conf_data.temp_file, "",1 );
 	wpd_conf_data.output_file = stderr;
-	strcpy(wpd_conf_data.asus_lcd, "");
-	strcpy(wpd_conf_data.asus_disp, "");
-	strcpy(wpd_conf_data.ac_state, "");
+	strncpy(wpd_conf_data.asus_lcd, "",1 );
+	strncpy(wpd_conf_data.asus_disp, "",1 );
+	strncpy(wpd_conf_data.ac_state, "",1 );
 	
 	if ( read_conf() == 0 )
 	{
