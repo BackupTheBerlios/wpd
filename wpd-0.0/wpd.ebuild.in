@@ -1,0 +1,42 @@
+
+inherit eutils flag-o-matic eutils
+
+DESCRIPTION="Daemon to control a laptop"
+HOMEPAGE="http://www.gardiol.org/wpd/"
+SRC_URI="mirror://www.gardiol.org/wpd/${P}.tar.gz"
+DEPEND=""
+
+LICENSE="GPL-2"
+SLOT="0"
+KEYWORDS="x86"
+IUSE=""
+
+src_unpack() {
+	unpack ${A}
+	cd ${S}
+}
+
+src_compile() {
+	cd ${S}
+
+	econf || die "econf failed for ${P}"
+}
+
+src_install() {
+	make DESTDIR=${D} install || die
+	dodoc README Authors 
+
+}
+
+pkg_postinst() {
+	echo
+	echo NEW! Since 0.7.2 WPD supports AUTOCONFIGURATION at startup.
+	echo 
+	echo Please delete your OLD /etc/wpd.conf 
+	echo You need it only to disable any feature '(using =off)' or if some auto
+	echo configuration is not correct and you need to override it in the config file
+	echo 
+	echo To launch wpd just type wpd.
+	echo
+}
+

@@ -1,0 +1,89 @@
+0.7.4
+=====
+
+Fixed a configure bug
+Added support for BATTERY_AC_STATE command
+Fixed a bug in available frequency list 
+
+
+0.7.3
+=====
+
+ADded support for icons in xfce4 panel!
+
+
+0.7.2
+=====
+
+Implemented CONFIGURATION AUTODETECT!
+needs testing though.
+Handled SIGPIPE signal to avoid crash on client death.
+Modified the wpdlib not to emit SIGPIPE
+Did some code cleanup in wpd daemon and library
+Started work to support ACPI4ASUS extensions
+works: LCD on / DISPLAY on / BOTH on
+
+
+0.7.1
+=====
+
+Added a new wpd command: SYSTEM_TIME_FORMATTED which
+returns a preformatted string representing the remaining time
+in the format:
+"HHh:MMm\0"
+Updated WPC and xfce4 panel plugin to use it.
+
+
+0.7.0
+=====
+
+Moved my_* functions to the wpd library and renamed to keep_*
+Heavy rewrite of wpdwidget, now called rich_progress_bar
+Modifications to xfce4 plugin: using the new rich_progress_bar and
+added a time label
+
+0.6.3
+=====
+
+NEW: get temperature with -T (CPU_TEMP)
+Changed CPU_MAX_FREQ to CPU_AVAIL_FREQ, now it gives the
+list of all possible frequencies. 
+Added the new "temp_file" option to wpd.conf
+
+
+0.6.2
+=====
+
+New xfce panel plugin, now using a special gtk widget
+
+
+0.6.1
+=====
+
+Fixed a nasty bug in the new xfce4 plugin
+
+
+0.6.0
+=====
+
+First version of the xfce4 (4.2.0) plugin
+Fixed a crash in the wpd daemon
+
+
+0.5.0
+=====
+
+Added configuration capabilities
+
+
+0.4.3
+=====
+
+Converted to use autoconf/automake
+
+
+0.3.0
+=====
+
+First public release
+

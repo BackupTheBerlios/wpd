@@ -1,0 +1,18 @@
+
+Report any bugs to 
+
+wpd@gardiol.org
+
+It's a mailing list but you do not need to be subscribed to post.
+
+
+
+
+
+
+BUG:
+
+- configuration is not loaded correctly
+
+Try to remove any " in the config file.
+

@@ -1,0 +1,173 @@
+
+WPD - Willy Power Daemon
+
+This is GPL software.
+
+Summary
+=======
+
+1 - general informations
+2 - compile and install
+3 - the wpd daemon, configuration
+4 - the wpc client
+5 - the wpk Gkrellm2 Plugin
+6 - the wpd library: how to write your programs
+7 - NOTE
+
+
+NOTE FOR ASUS OWNERS
+====================
+
+The LCD and DISPLAY commands works currently only on ACPI4ASUS interface, so you need to load 
+the approprieate module into your kernel. Please report any problems
+
+
+General informations
+====================
+
+WPD is a featureful deamon for Linux whose aim is to allow an easy management 
+of the cpufreq frequency scaling capabilties of modern Centrino, AMD and similar 
+CPUs and an easy reading of ACPI data. 
+
+# Completely idle daemon (no background activity if not requested)
+# Autoconfigures itself at startup with available supported capabilities
+# Uses Linux 2.6 cpufreq
+# Retrieve the ac state
+# Check if battery is installed
+# Retrieve battery remaining capacity
+# Retrieve battery discharge rate
+# Retrieve battery maximum capacity
+# Retrieve cpu current frequency
+# Retrieve cpu current frequency governor
+# Support for ASUS 4 ACPI extensions
+# Turn ON/OFF lcd only, external display only, both displays
+# Calculate time left when in battery mode
+# Retrieve the CPU (thermal zone) temperature
+# Set cpu desired governor (powersave, performance, ondemand)
+# Comes with a easy to use library
+# Includes a Gkrellm2 plugin
+# Includes a Xfce4 panel plugin (xfce 4.2.0)
+# Retrieve complete list of available CPU frequencies
+# Present a visual alert when battery is empty (Gkrellm2 and Xfce4 plugins)
+
+WPD is under active and heavy development but it is quite stable, what i need is 
+more people to test it with different hardware configurations and help in the 
+development process (specially in the plugin business because i am no good in GUI's).
+
+The wpd daemon and the library are the core, the library is simply a wrapper to
+interface with the daemon with ease. 
+
+THe wpc client is a simple command line tool to query the wpd daemon and issue 
+commands to it.
+
+The wpk is a plugin for GKrellm2 which collect and shows all the data on nice and
+polished panels.
+
+The panel-plugin is a plugin for XFCE4 panel.
+
+
+
+Compile and install
+===================
+
+Very easy:
+./configure
+make
+make install
+
+You can add one of the following options to configure:
+    --disable-wpk
+	 --disable-wpc
+	 --disable-xfce4
+To dksable building of the wpc command line tool or the plugins
+
+
+The wpd daemon, configuration
+=============================
+
+To run the daemon just type 
+wpd
+on the command line (as root). It will by default, fork and disappear in the background.
+To prevent this behaviour and run wpd in foreground, type:
+wpd -dD
+
+WPD is capable of autodetect all the available interfaces and system capabilities, but
+in case you need to do some manual configuration edit /etc/wpd.conf.
+There should be an example wpd.conf with the source code.
+
+To disable a feature just type off in the config file, for example to disable
+battery state:
+battery_state=off
+
+Please DO NOT use " in the config file.
+
+If you like to test a new configuration, type:
+wpd -c conf_file
+
+wpd also reload and does a new autodetection when receives SIGHUP.
+
+For a brief help:
+wpd -h
+
+
+
+The wpc client
+==============
+
+Simply type wpc to get the full list of recognized options.
+
+
+
+The wpk gkrellm2 plugin
+=======================
+
+After make install, reload your gkrellm and go to the plugin configuration dialog.
+
+
+The XFCE4 plugin
+=================
+
+same as wpk.
+
+
+The wpd library: how to write your programs
+===========================================
+
+
+It is possible to talk to the daemon using sockets, but the easiest way to go is
+the libwpd.so which is created from wpd_commands.c and exports the following three
+methods:
+
+send_command : send a command to the daemon and return an integer as answer
+
+send_command_str : send a command and return a string as answer, for example it is
+needed for the get current governor command
+
+setup_connaction : used to connect to the daemon and keep the connection.
+
+It is possible to simply issue send_command(_str) without first creating a connection,
+everithing will be handled internally and the socket will be closed just after the
+use. If multiple commands are issued, the setup_connection can be used to reduce the
+overhead.
+
+For linking, add: -lwpd to your lddflags.
+In the source code write:
+#include <wpd_commands.h>
+
+
+
+NOTE
+====
+
+So far, ONLY 2.6 ACPI interface is supported!
+Many configurations are completely HARDWIRED, check wpd.h.
+
+
+Willy Gardiol, willy@gardiol.org
+
+www.gardiol.org/wpd
+
+Mailinglist: wpd@gardiol.org (to subscribe, write to wpd-subscribe@gardiol.org)
+
+
+
