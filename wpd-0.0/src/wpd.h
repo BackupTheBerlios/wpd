@@ -28,8 +28,6 @@ typedef enum {
 } BOOL;
 #define BUFFER_LEN 1024
 /* mask and submask are used to parse the incoming command */
-#define MASK 0xff000000
-#define SUBMASK 0x000000ff
 
 typedef enum {
 		  NO_ERROR,
@@ -84,6 +82,7 @@ typedef enum {
 #define CPU_FREQ_SLOW 1
 #define CPU_FREQ_FAST 2
 #define CPU_FREQ_AUTO 3
+#define CPU_FREQ_CONSERVATIVE 4
 
 void collect_battery_data( int*, int* );
 int collect_cpu_data( );

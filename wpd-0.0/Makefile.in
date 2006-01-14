@@ -62,7 +62,7 @@ RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	uninstall-recursive
 ETAGS = etags
 CTAGS = ctags
-DIST_SUBDIRS = src doc wpc wpk panel-plugin
+DIST_SUBDIRS = src doc wpc wpk panel-plugin gwpc
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -103,6 +103,8 @@ ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
+ENABLE_GWPC_FALSE = @ENABLE_GWPC_FALSE@
+ENABLE_GWPC_TRUE = @ENABLE_GWPC_TRUE@
 ENABLE_WPC_FALSE = @ENABLE_WPC_FALSE@
 ENABLE_WPC_TRUE = @ENABLE_WPC_TRUE@
 ENABLE_WPK_FALSE = @ENABLE_WPK_FALSE@
@@ -156,6 +158,7 @@ ac_ct_CXX = @ac_ct_CXX@
 ac_ct_F77 = @ac_ct_F77@
 ac_ct_RANLIB = @ac_ct_RANLIB@
 ac_ct_STRIP = @ac_ct_STRIP@
+ac_pt_PKG_CONFIG = @ac_pt_PKG_CONFIG@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
 am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
@@ -195,7 +198,8 @@ AUTOMAKE_OPTIONS = no-dependencies 1.8
 @ENABLE_WPC_TRUE@DOIT = wpc
 @ENABLE_WPK_TRUE@DOIT2 = wpk
 @ENABLE_XFCE4_TRUE@DOIT3 = panel-plugin
-SUBDIRS = src doc $(DOIT) $(DOIT2) $(DOIT3)
+@ENABLE_GWPC_TRUE@DOIT4 = gwpc
+SUBDIRS = src doc $(DOIT) $(DOIT2) $(DOIT3) $(DOIT4)
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

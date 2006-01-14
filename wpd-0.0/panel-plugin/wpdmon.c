@@ -99,11 +99,20 @@ typedef struct
  */
 static gboolean on_button_press_event_cb (GtkWidget * widget, GdkEventButton * event, Control * control)
 {
+	
+	GtkWidget* dialog;
     if (event->button == 1)
     {
     }
-
-    return FALSE;
+/*
+	 dialog = gtk_message_dialog_new ( widget,
+						                  GTK_DIALOG_DESTROY_WITH_PARENT,
+												GTK_MESSAGE_ERROR,
+												GTK_BUTTONS_CLOSE,
+												"CLICK CLICK");
+	  gtk_dialog_run (GTK_DIALOG (dialog));
+	   gtk_widget_destroy (dialog);
+  */  return FALSE;
 }
 
 
@@ -118,8 +127,8 @@ static void reset( t_wpd* wpd )
 {
 	int i;
 	wpd->n_frequencies = 0;
-	wpd->n_frequencies = keep_send_command_array( COMMAND_CPU | CPU_AVAIL_FREQ, wpd->frequencies, &wpd_socket ) / sizeof(int);
-	wpd->battery_max_capacity = keep_send_command( COMMAND_BATTERY | BATTERY_MAX_CAPACITY, &wpd_socket );
+	wpd->n_frequencies = keep_send_request_array( WPD_CMD(MODE_REQUEST,SYS_CPU,AVAIL_FREQUENCIES), wpd->frequencies, &wpd_socket ) / sizeof(int);
+	wpd->battery_max_capacity = keep_send_request( WPD_CMD(MODE_REQUEST,SYS_BATTERY,MAX_CAPACITY), &wpd_socket );
 
 	printf("nf is %d\n", wpd->n_frequencies );
 	if ( wpd->n_frequencies < 0 )
@@ -171,12 +180,12 @@ static gboolean update( t_wpd* wpd)
 	governor[0] = '\0';
 	time[0] = '\0';
 
-	cur_freq = keep_send_command( COMMAND_CPU | CPU_FREQ, &wpd_socket );
-	cur_rate = keep_send_command( COMMAND_BATTERY | BATTERY_PRESENT_RATE, &wpd_socket );
-	cur_rcap = keep_send_command( COMMAND_BATTERY | BATTERY_REMAINING_CAPACITY, &wpd_socket );
-   keep_send_command_str( COMMAND_CPU | CPU_GOVERNOR, governor, &wpd_socket );
-   keep_send_command_str( COMMAND_SYSTEM | SYSTEM_TIME_FORMATTED, time, &wpd_socket );
-	cur_temp = keep_send_command( COMMAND_CPU | CPU_TEMP, &wpd_socket );
+	cur_freq = keep_send_request( WPD_CMD(MODE_REQUEST,SYS_CPU,FREQUENCY), &wpd_socket );
+	cur_rate = keep_send_request( WPD_CMD(MODE_REQUEST,SYS_BATTERY,PRESENT_RATE), &wpd_socket );
+	cur_rcap = keep_send_request( WPD_CMD(MODE_REQUEST,SYS_BATTERY,REMAINING_CAPACITY), &wpd_socket );
+   keep_send_request_str( WPD_CMD(MODE_REQUEST,SYS_CPU,GOVERNOR), governor, &wpd_socket );
+   keep_send_request_str( WPD_CMD(MODE_REQUEST,SYS_SYSTEM,TIME_FORMATTED), time, &wpd_socket );
+	cur_temp = keep_send_request( WPD_CMD(MODE_REQUEST,SYS_CPU,CPU_TEMP), &wpd_socket );
 
 
 	rich_progress_bar_set_cur( wpd->rcap, cur_rcap );

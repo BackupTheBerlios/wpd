@@ -6,8 +6,8 @@ AC_PREREQ([2.50])
 AC_CONFIG_HEADERS([config.h])
 
 WPD_MAJOR=0
-WPD_MINOR=7
-WPD_SUB=6
+WPD_MINOR=8
+WPD_SUB=2
 
 DEFCONF_PORT=1978
 DEFCONF_NSOCKETS=10
@@ -58,6 +58,10 @@ AC_ARG_ENABLE([wpc], AS_HELP_STRING([--disable-wpc], [Do not create the wpc comm
 						 , [enable_wpc=$enableval], [enable_wpc=yes])
 AM_CONDITIONAL(ENABLE_WPC, [test x"$enable_wpc" = xyes])
 
+AC_ARG_ENABLE([gwpc], AS_HELP_STRING([--disable-gwpc], [Do not create the gwpc gtk tool])
+						 , [enable_gwpc=$enableval], [enable_gwpc=yes])
+AM_CONDITIONAL(ENABLE_GWPC, [test x"$enable_gwpc" = xyes])
+
 AC_ARG_ENABLE([wpk], AS_HELP_STRING([--disable-wpk], [Do not create the wpk Gkrellm2 plugin])
 						 , [enable_wpk=$enableval], [enable_wpk=yes])
 AM_CONDITIONAL(ENABLE_WPK, [test x"$enable_wpk" = xyes])
@@ -81,7 +85,7 @@ XFCE_PANEL_PLUGIN([XFCE4_PANEL], [4.2.0])
 fi
 
 
-AC_OUTPUT([Makefile doc/Makefile src/Makefile wpk/Makefile wpc/Makefile panel-plugin/Makefile] )
+AC_OUTPUT([Makefile doc/Makefile src/Makefile wpk/Makefile wpc/Makefile panel-plugin/Makefile gwpc/Makefile] )
 
 version=$WPD_MAJOR.$WPD_MINOR.$WPD_SUB
 

@@ -26,6 +26,7 @@ void print_help()
 	printf("                    -s: set cpu clock to minimum\n");
 	printf("                    -f: set cpu clock to maximum\n");
 	printf("                    -a: set cpu clock to ondemand\n");
+	printf("                    -o: set cpu clock to conservative\n");
 	printf("                    -r: battery remaining capacity\n");
 	printf("                    -p: battery present rate\n");
 	printf("                    -F: current cpu frequency\n");
@@ -48,11 +49,12 @@ int main( int argc, char *argv[] )
 	char str[200];
 	int array[100];
 	int n;
-	static struct option long_options[20] = {
+	static struct option long_options[21] = {
 		{ "help", 0, 0, 'h' },
 		{ "slow", 0, 0, 's' },
 		{ "fast", 0, 0, 'f' },
 		{ "auto", 0, 0, 'a' },
+		{ "conservative", 0, 0, 'o' },
 		{ "remaining-capacity", 0, 0, 'r' },
 		{ "present-rate", 0, 0, 'p' },
 		{ "frequency", 0, 0, 'F' },
@@ -78,87 +80,92 @@ int main( int argc, char *argv[] )
 		exit(0);
 	}
 
-	while ((ch = getopt_long(argc, argv, "hsfarpFgACtTSdlbcB", long_options, 
+	while ((ch = getopt_long(argc, argv, "hsfaorpFgACtTSdlbcB", long_options, 
 			         &option_index)) != -1) 
 	{
 		switch (ch)
 		{
 		case 's':
-			printf("%d\n", send_command( COMMAND_CPU | CPU_SLOW,-1,e ));
+			printf("%d\n", send_command( WPD_CMD( MODE_COMMAND, SYS_CPU, CPU_SLOW ), 0 ,-1,e ));
 			break;
 			
 		case 'f':
-			printf("%d\n", send_command( COMMAND_CPU | CPU_FAST,-1,e ));
+			printf("%d\n", send_command( WPD_CMD( MODE_COMMAND, SYS_CPU,CPU_FAST),0 ,-1,e ));
 			break;
 			
 		case 'a':
-			printf("%d\n", send_command( COMMAND_CPU | CPU_AUTO,-1,e ));
+			printf("%d\n", send_command( WPD_CMD( MODE_COMMAND, SYS_CPU, CPU_AUTO),0 ,-1,e ));
+			break;
+			
+		case 'o':
+			printf("%d\n", send_command( WPD_CMD( MODE_COMMAND, SYS_CPU, CPU_CONSERVATIVE),0 ,-1,e ));
 			break;
 			
 		case 'r':
-			printf("%d\n", send_command( COMMAND_BATTERY | 
-					BATTERY_REMAINING_CAPACITY, -1,e));
+			printf("%d\n", send_request( WPD_CMD( MODE_REQUEST, SYS_BATTERY,
+													REMAINING_CAPACITY), -1,e));
 			break;
 			
 		case 'p':
-			printf("%d\n", send_command( COMMAND_BATTERY | 
-					BATTERY_PRESENT_RATE, -1,e));
+			printf("%d\n", send_request( WPD_CMD( MODE_REQUEST, SYS_BATTERY,
+													PRESENT_RATE), -1,e));
 			break;
 			
 		case 'F':
-			printf("%d\n", send_command( COMMAND_CPU | CPU_FREQ, -1,e ));
+			printf("%d\n", send_request( WPD_CMD( MODE_REQUEST, SYS_CPU,FREQUENCY), -1,e ));
 			break;
 		
 		case 'g':
-			send_command_str( COMMAND_CPU | CPU_GOVERNOR, str, -1 );
+			send_request_str( WPD_CMD( MODE_REQUEST, SYS_CPU,GOVERNOR), str, -1 );
 			printf("%s\n", str);
 			break;
 			
 		case 'A':
-			n = send_command_array( COMMAND_CPU | CPU_AVAIL_FREQ, array, -1 ) / sizeof(int);
+			n = send_request_array( WPD_CMD( MODE_REQUEST, SYS_CPU,
+											AVAIL_FREQUENCIES), array, -1 ) / sizeof(int);
 			for ( ; n > 0; n--)
 				printf("%d\n", array[n-1] );
 			break;
 
 		case 'C':
-			printf("%d\n", send_command( COMMAND_BATTERY | BATTERY_MAX_CAPACITY, -1,e));
+			printf("%d\n", send_request( WPD_CMD( MODE_REQUEST, SYS_BATTERY,MAX_CAPACITY), -1,e));
 			break;
 			
 		case 't':
-			printf("%d\n", send_command( COMMAND_SYSTEM | SYSTEM_TIMEREMAINING, -1,e));
+			printf("%d\n", send_request( WPD_CMD( MODE_REQUEST,SYS_SYSTEM,TIMEREMAINING), -1,e));
 			break;
 			
 		case 'T':
-			printf("%d\n", send_command( COMMAND_CPU | CPU_TEMP, -1,e));
+			printf("%d\n", send_request( WPD_CMD( MODE_REQUEST, SYS_CPU, CPU_TEMP), -1,e));
 			break;
 			
 		case 'S':
-			send_command_str( COMMAND_SYSTEM | SYSTEM_TIME_FORMATTED, str, -1 );
+			send_request_str( WPD_CMD( MODE_REQUEST,SYS_SYSTEM,TIME_FORMATTED), str, -1 );
 			printf("%s\n", str);
 			break;
 			
 		case 'l':
-			printf("%d\n", send_command( COMMAND_SYSTEM | SYSTEM_LCD_ON,-1,e ));
+			printf("%d\n", send_command( WPD_CMD(MODE_COMMAND,SYS_SYSTEM,LCD_ON),0,-1,e ));
 			break;
 
 		case 'd':
-			printf("%d\n", send_command( COMMAND_SYSTEM | SYSTEM_DISPLAY_ON,-1,e ));
+			printf("%d\n", send_command( WPD_CMD(MODE_COMMAND,SYS_SYSTEM,DISPLAY_ON),0,-1,e ));
 			break;
 
 		case 'b':
-			printf("%d\n", send_command( COMMAND_SYSTEM | SYSTEM_BOTH_ON,-1,e ));
+			printf("%d\n", send_command( WPD_CMD(MODE_COMMAND,SYS_SYSTEM,LCD_DISPLAY_ON),0,-1,e ));
 			break;
 			
 		case 'c':
-			send_command_str( COMMAND_BATTERY | BATTERY_AC_STATE, str, -1 );
+			send_request_str( WPD_CMD(MODE_REQUEST,SYS_BATTERY,AC_STATE), str, -1 );
 			printf("%s\n", str);
 			break;
 			
 		case 'B':
-			send_command_str( COMMAND_BATTERY | BATTERY_PRESENT, str, -1 );
+			send_request_str( WPD_CMD(MODE_REQUEST,SYS_BATTERY,BATTERY_PRESENT), str, -1 );
 			printf("%s\n", str);
 			break;
-			
+
 		default:
 			print_help();
 			exit(0);

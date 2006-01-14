@@ -204,28 +204,28 @@ int calculate_time()
 /*
  * Process the COMMAND_BATTERY family of commands
  */
-void process_battery(int cmm, int tmp_socket)
+void process_battery_request(int cmm, int tmp_socket)
 {
-	if ( cmm & BATTERY_PRESENT_RATE )
+	if ( cmm == PRESENT_RATE )
 	{
 		update_battery_state();
 		command_socket_output( tmp_socket, battery_present_rate );
 	}
-	else if ( cmm & BATTERY_REMAINING_CAPACITY )
+	else if ( cmm == REMAINING_CAPACITY )
 	{
 		update_battery_state();
 		command_socket_output( tmp_socket, battery_remaining_capacity );
 	}
-	else if ( cmm & BATTERY_MAX_CAPACITY )
+	else if ( cmm == MAX_CAPACITY )
 	{
 		command_socket_output( tmp_socket, collect_battery_info());
 	}
-	else if ( cmm & BATTERY_PRESENT )
+	else if ( cmm == BATTERY_PRESENT )
 	{
 		collect_battery_presence( buffer );
 		command_socket_output_str( tmp_socket, buffer );
 	}
-	else if ( cmm & BATTERY_AC_STATE )
+	else if ( cmm == AC_STATE )
 	{
 		collect_ac_state( buffer );
 		command_socket_output_str( tmp_socket, buffer );
@@ -237,31 +237,25 @@ void process_battery(int cmm, int tmp_socket)
 /*
  * Process the COMMAND_CPU family of commands
  */
-void process_cpu(int cmm, int tmp_socket)
+void process_cpu_request(int cmm, int tmp_socket)
 {
 	int freq = 0;
 	int freq_range[ WPD_MAX_N_FREQUENCIES ];
-	if ( cmm & CPU_FREQ )
+	if ( cmm == FREQUENCY )
 	{
 		command_socket_output(tmp_socket, collect_cpu_data());
 	}
-	else if ( cmm & CPU_SLOW )
-		command_socket_output( tmp_socket,  cpu_speed( CPU_FREQ_SLOW ) );
-	else if ( cmm & CPU_FAST )
-		command_socket_output( tmp_socket, cpu_speed( CPU_FREQ_FAST ) );
-	else if ( cmm & CPU_AUTO )
-		command_socket_output( tmp_socket, cpu_speed( CPU_FREQ_AUTO ) );
-	else if ( cmm & CPU_GOVERNOR )
+	else if ( cmm == GOVERNOR )
 	{
 		collect_governor_data( buffer );
 		command_socket_output_str( tmp_socket, buffer );
 	}
-	else if ( cmm & CPU_AVAIL_FREQ )
+	else if ( cmm == AVAIL_FREQUENCIES )
 	{
 		freq = collect_freq_data( freq_range, WPD_MAX_N_FREQUENCIES );
 		command_socket_output_array( tmp_socket, freq_range, freq );
 	}
-	else if ( cmm & CPU_TEMP )
+	else if ( cmm == CPU_TEMP )
 		command_socket_output( tmp_socket, collect_cpu_temp() );
 	else
 		command_socket_output( tmp_socket, -1 );
@@ -270,44 +264,93 @@ void process_cpu(int cmm, int tmp_socket)
 /*
  * Process the SYSTEM_COMMAND family of commands
  */
-void process_system(int cmm, int tmp_socket)
+void process_system_request(int cmm, int tmp_socket)
 {
 	int minuti = 0;
 	char str[BUFFER_LEN];
-	if ( cmm & SYSTEM_TIMEREMAINING )
+	if ( cmm == TIMEREMAINING )
 	{
 		minuti = calculate_time();	
 		command_socket_output( tmp_socket, minuti );
 		
 	}
-	else if ( cmm & SYSTEM_TIME_FORMATTED )
+	else if ( cmm == TIME_FORMATTED )
 	{
 		minuti = calculate_time();	
 		sprintf( str, "%2dh:%02dm", minuti/60, minuti%60 );
 		command_socket_output_str( tmp_socket, str );
 	}
-	else if ( cmm & SYSTEM_LCD_ON )
+	else
+		command_socket_output( tmp_socket, -1 );
+}
+
+void process_battery_command( int cmm, int param, int tmp_socket )
+{
+
+
+}
+
+void process_cpu_command(int cmm, int param, int tmp_socket )
+{
+	if ( cmm == CPU_SLOW )
+		command_socket_output( tmp_socket,  cpu_speed( CPU_FREQ_SLOW ) );
+	else if ( cmm == CPU_FAST )
+		command_socket_output( tmp_socket, cpu_speed( CPU_FREQ_FAST ) );
+	else if ( cmm == CPU_AUTO )
+		command_socket_output( tmp_socket, cpu_speed( CPU_FREQ_AUTO ) );
+	else if ( cmm == CPU_CONSERVATIVE )
+		command_socket_output( tmp_socket, cpu_speed( CPU_FREQ_CONSERVATIVE ) );
+	else
+		command_socket_output( tmp_socket, -1 );
+}
+
+void process_system_command(int cmm, int param, int tmp_socket )
+{
+	if ( cmm == LCD_ON )
 	{
 		command_socket_output( tmp_socket, lcd_on() );
 	}
-	else if ( cmm & SYSTEM_DISPLAY_ON )
+	else if ( cmm == DISPLAY_ON )
 	{
 		command_socket_output( tmp_socket, display_on() );
 	}
-	else if ( cmm & SYSTEM_BOTH_ON )
+	else if ( cmm == LCD_DISPLAY_ON )
 	{
 		command_socket_output( tmp_socket, both_on() );
 	}
 	else
 		command_socket_output( tmp_socket, -1 );
+
+}
+
+void process_request( int cmm, int tmp_socket )
+{
+	if ( SYS( cmm ) == SYS_BATTERY )
+		process_battery_request( SUB(cmm) , tmp_socket );
+	else if ( SYS( cmm ) == SYS_CPU )
+		process_cpu_request( SUB(cmm), tmp_socket );
+	else if ( SYS(cmm) == SYS_SYSTEM )
+		process_system_request( SUB(cmm), tmp_socket );
+	else
+		fprintf(wpd_conf_data.output_file, "Unknown request\n");
+}
+
+void process_command( int cmm, int param, int tmp_socket )
+{
+	if ( SYS( cmm ) == SYS_CPU )
+		process_cpu_command( SUB(cmm), param, tmp_socket );
+	else if ( SYS(cmm) == SYS_SYSTEM )
+		process_system_command( SUB(cmm), param, tmp_socket );
+	else
+		fprintf(wpd_conf_data.output_file, "Unknown command\n");
 }
 
 /*
  * Read the command and dispatch it
  */
-void process_command( int tmp_socket )
+void process_socket( int tmp_socket )
 {
-	int cmm = 0;
+	int cmm = 0, param = 0;
 	ERROR err = NO_ERROR;
 
 	cmm = read_command( tmp_socket, &err );
@@ -316,16 +359,24 @@ void process_command( int tmp_socket )
 		remove_socket( tmp_socket );
 	else if ( err == NO_ERROR )
 	{
-		if ( ( ( cmm & MASK ) & COMMAND_BATTERY ) )
-			process_battery( cmm & SUBMASK, tmp_socket );
-		else if ( ( cmm & MASK ) & COMMAND_CPU )
-			process_cpu( cmm & SUBMASK, tmp_socket );
-		else if ( ( cmm & MASK ) & COMMAND_SYSTEM )
-			process_system( cmm & SUBMASK, tmp_socket );
-		else if ( ( cmm & MASK ) & COMMAND_KEEP_CONNECTION )
+		if ( IS_REQUEST( cmm ) )
+		{
+			process_request( cmm, tmp_socket );
+		}
+		else if ( IS_COMMAND( cmm ) )
+		{
+			param = read_command( tmp_socket, &err );
+			if ( param == -1 )
+				remove_socket( tmp_socket );
+			else
+				process_command( cmm, param, tmp_socket );
+		}
+		else if ( MODE( cmm ) == KEEP_CONNECTION )
 			add_socket( tmp_socket );
-		else
-			fprintf(wpd_conf_data.output_file, "Unknown command\n");
+		else if ( MODE( cmm ) == STREAM )
+		{
+			fprintf(wpd_conf_data.output_file, "Stream mode is NOT supported now\n");
+		}
 	}
 	else
 		fprintf(wpd_conf_data.output_file, "Error: %d\n", err );
@@ -377,7 +428,7 @@ int wait_event()
 			}
 			else if ( FD_ISSET( keep_socket[i], &set ) )
 			{
-				process_command( keep_socket[i] );
+				process_socket( keep_socket[i] );
 			}
 		}
 		
@@ -391,7 +442,7 @@ int wait_event()
 			tmp_socket = accept( command_socket, (struct sockaddr *)  &pin, &addrlen);
 			if ( tmp_socket != -1 )
 			{
-				process_command( tmp_socket );
+				process_socket( tmp_socket );
 			}
 			else
 				fprintf(wpd_conf_data.output_file, "Error accepting new socket - %s (%d)\n", strerror(errno), errno);

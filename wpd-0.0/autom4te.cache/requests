@@ -535,6 +535,7 @@
                         'AC_FUNC_ALLOCA' => 1,
                         '_AM_SET_OPTION' => 1,
                         'AC_CANONICAL_HOST' => 1,
+                        '_LT_LINKER_BOILERPLATE' => 1,
                         'AC_LIBTOOL_LANG_CXX_CONFIG' => 1,
                         'AC_LIBTOOL_PROG_CC_C_O' => 1,
                         'AC_PROG_RANLIB' => 1,
@@ -593,13 +594,14 @@
                         'AC_CONFIG_LIBOBJ_DIR' => 1,
                         'AC_LIBTOOL_COMPILER_OPTION' => 1,
                         'AC_DISABLE_SHARED' => 1,
+                        '_LT_COMPILER_BOILERPLATE' => 1,
                         'AC_LIBTOOL_SETUP' => 1,
                         'AC_LIBTOOL_WIN32_DLL' => 1,
                         'AC_PROG_LD_RELOAD_FLAG' => 1,
                         'AC_HEADER_TIME' => 1,
                         'AC_FUNC_GETMNTENT' => 1,
-                        'AC_TYPE_MODE_T' => 1,
                         'AM_MISSING_HAS_RUN' => 1,
+                        'AC_TYPE_MODE_T' => 1,
                         'AC_LIBTOOL_DLOPEN_SELF' => 1,
                         'm4_sinclude' => 1,
                         'AC_PATH_X' => 1,
@@ -666,6 +668,8 @@
                         'AC_LIBTOOL_SYS_MAX_CMD_LEN' => 1,
                         'AC_CONFIG_HEADERS' => 1,
                         'AM_SET_DEPDIR' => 1,
+                        '_LT_CC_BASENAME' => 1,
+                        'PKG_PROG_PKG_CONFIG' => 1,
                         'AC_CHECK_FUNCS' => 1
                       }
                     ], 'Autom4te::Request' )

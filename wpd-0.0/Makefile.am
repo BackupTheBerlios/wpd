@@ -9,7 +9,10 @@ endif
 if ENABLE_XFCE4
 DOIT3 = panel-plugin
 endif
+if ENABLE_GWPC
+DOIT4 = gwpc
+endif
 
-SUBDIRS = src doc $(DOIT) $(DOIT2) $(DOIT3)
+SUBDIRS = src doc $(DOIT) $(DOIT2) $(DOIT3) $(DOIT4)
 
 

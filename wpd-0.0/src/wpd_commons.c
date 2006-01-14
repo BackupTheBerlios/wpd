@@ -139,6 +139,41 @@ static int send_and_receive( int tmp_socket, int cmm, char* buffer, ERROR* err )
 	return len;
 }
 
+static int send_and_receive_param( int tmp_socket, int cmm, int param, char* buffer, ERROR* err )
+{
+	int len = COMMAND_LENGTH;
+
+	if ( tmp_socket == -1 )
+	{
+		err[0] = READ_ERROR;
+		return -1;
+	}
+	
+	if ( atom_send( tmp_socket, (char*)&len, sizeof(int), err ) == -1 )
+	{
+		return -1;
+	}
+	if ( atom_send( tmp_socket, (char*)&cmm, len, err ) == -1 )
+	{
+		return -1;
+	}
+	if ( atom_send( tmp_socket, (char*)&len, sizeof(int), err ) == -1 )
+	{
+		return -1;
+	}
+	if ( atom_send( tmp_socket, (char*)&param, len, err ) == -1 )
+	{
+		return -1;
+	}
+	if ( atom_read( tmp_socket, (char*)&len, sizeof(int), err ) == -1 )
+		return -1;
+	
+	if ( atom_read( tmp_socket, buffer, len, err ) == -1 )
+		return -1;
+
+	return len;
+}
+
 /*
  *
  *
@@ -154,11 +189,14 @@ void wpd_setup(int p)
 	port = p;
 }
 
-int send_command_str( int comm, char * str, int tmp_socket )
+int send_request_str( int comm, char * str, int tmp_socket )
 {
 	int len;
 	ERROR err = NO_ERROR;
 	int close_socket = 0;
+
+	if ( !IS_REQUEST(comm) )
+		return -1;
 	
 	if ( tmp_socket == -1 )
 	{
@@ -183,12 +221,15 @@ int send_command_str( int comm, char * str, int tmp_socket )
 	return strlen(str);
 }
 
-int send_command_array( int comm, int * array, int tmp_socket )
+int send_request_array( int comm, int * array, int tmp_socket )
 {
 	int len;
 	ERROR err = NO_ERROR;
 	int close_socket = 0;
 	
+	if ( !IS_REQUEST(comm) )
+		return -1;
+
 	if ( tmp_socket == -1 )
 	{
 		tmp_socket = wpd_connect( port, &err );
@@ -210,12 +251,15 @@ int send_command_array( int comm, int * array, int tmp_socket )
 	return len;
 }
 
-int send_command( int comm, int tmp_socket, int * error )
+int send_request( int comm, int tmp_socket, int * error )
 {
 	int len, ret;
 	ERROR err = NO_ERROR;
 	int close_socket = 0;
 	error[0] = 0;
+
+	if ( !IS_REQUEST(comm) )
+		return -1;
 	
 	if ( tmp_socket == -1 )
 	{
@@ -240,11 +284,45 @@ int send_command( int comm, int tmp_socket, int * error )
 	return ret;
 }
 
+int send_command( int comm, int param, int tmp_socket, int * error )
+{
+	int len, ret;
+	ERROR err = NO_ERROR;
+	int close_socket = 0;
+	error[0] = 0;
+	
+	if ( !IS_COMMAND(comm) )
+		return -1;
+	
+	if ( tmp_socket == -1 )
+	{
+		tmp_socket = wpd_connect( port, &err );
+		if ( err != NO_ERROR )
+		{
+			error[0] = 1;
+			return -1;
+		}
+		close_socket = 1;
+	}
+		
+	len = send_and_receive_param( tmp_socket,comm,param, (char*)&ret, &err );
+	if ( err != NO_ERROR ) {
+		error[0] = 1;
+		return -1;
+	}
+	
+	if ( close_socket )
+		close( tmp_socket );
+
+	return ret;
+
+}
+
 int setup_connection()
 {
 	int len = 0, ret;
 	ERROR err = NO_ERROR;
-	int comm = COMMAND_KEEP_CONNECTION;
+	int comm = KEEP_CONNECTION;
 	int tmp_socket = wpd_connect( port, &err );
 
 	if ( err != NO_ERROR )
@@ -278,26 +356,26 @@ static void setup_keep_connection( int* tmp_socket )
 
 
 
-int keep_send_command( int cmm, int* tmp_socket )
+int keep_send_request( int cmm, int* tmp_socket )
 {
 	int ret = -1;
 	int err = 0;
 	if ( tmp_socket[0] == -1 )
 		setup_keep_connection( tmp_socket );
 
-	ret = send_command( cmm, tmp_socket[0], &err );
+	ret = send_request( cmm, tmp_socket[0], &err );
 	if ( err == 1 )
 		tmp_socket[0] = -1;
 	return ret;
 }
 
-int keep_send_command_str( int cmm, char* str, int* tmp_socket )
+int keep_send_request_str( int cmm, char* str, int* tmp_socket )
 {
 	int ret = 0;
 	if ( tmp_socket[0] == -1 )
 		setup_keep_connection( tmp_socket );
 
-	ret = send_command_str( cmm, str, tmp_socket[0] );
+	ret = send_request_str( cmm, str, tmp_socket[0] );
 	if ( ret == -1 )
 	{
 		ret = 0;
@@ -306,13 +384,13 @@ int keep_send_command_str( int cmm, char* str, int* tmp_socket )
 	return ret;
 }
 
-int keep_send_command_array( int cmm, int* str, int* tmp_socket )
+int keep_send_request_array( int cmm, int* str, int* tmp_socket )
 {
 	int ret = 0;
 	if ( tmp_socket[0] == -1 )
 		setup_keep_connection( tmp_socket );
 
-	ret = send_command_array( cmm, str, tmp_socket[0] );
+	ret = send_request_array( cmm, str, tmp_socket[0] );
 	if ( ret == -1 )
 	{
 		ret = 0;
@@ -321,4 +399,16 @@ int keep_send_command_array( int cmm, int* str, int* tmp_socket )
 	return ret;
 }
 
+int keep_send_command( int cmm, int param, int* tmp_socket )
+{
+	int ret = -1;
+	int err = 0;
+	if ( tmp_socket[0] == -1 )
+		setup_keep_connection( tmp_socket );
+
+	ret = send_command( cmm, param, tmp_socket[0], &err );
+	if ( err == 1 )
+		tmp_socket[0] = -1;
+	return ret;
+}
 

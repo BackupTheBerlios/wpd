@@ -1,12 +1,12 @@
 # Copyright 1999-2004 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/wpd/Repository/wpd-0.0/wpd.ebuild.in,v 1.2 2005/02/27 20:20:45 gardiol Exp $
+# $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/wpd/Repository/wpd-0.0/wpd.ebuild.in,v 1.3 2006/01/14 15:15:35 gardiol Exp $
 
 inherit eutils flag-o-matic eutils
 
 DESCRIPTION="Daemon to control a laptop"
 HOMEPAGE="http://www.gardiol.org/wpd/"
-SRC_URI="mirror://www.gardiol.org/wpd/${P}.tar.gz"
+SRC_URI="mirror://www.gardiol.org/sites/01-willy/uploads/project-wpd/${P}.tar.gz"
 DEPEND=""
 
 LICENSE="GPL-2"

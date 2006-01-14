@@ -29,6 +29,10 @@ int cpu_speed( int speed )
 	case CPU_FREQ_AUTO:
 		set_governor( "ondemand\n" );
 		break;
+		
+	case CPU_FREQ_CONSERVATIVE:
+		set_governor( "conservative\n" );
+		break;
 	}
 	return 1;
 }

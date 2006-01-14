@@ -190,13 +190,13 @@ static void update_wpk()
 	
 	if ( pGK->second_tick )
 	{
-		cur_freq = keep_send_command( COMMAND_CPU | CPU_FREQ, &wpd_socket );
-		cur_rate = keep_send_command( COMMAND_BATTERY | BATTERY_PRESENT_RATE, &wpd_socket );
+		cur_freq = keep_send_request(WPD_CMD(MODE_REQUEST,SYS_CPU, FREQUENCY), &wpd_socket );
+		cur_rate = keep_send_request(WPD_CMD(MODE_REQUEST,SYS_BATTERY,PRESENT_RATE), &wpd_socket );
 		set_rate();
-		cur_rcap = keep_send_command( COMMAND_BATTERY | BATTERY_REMAINING_CAPACITY, &wpd_socket );
-		time_remaining = keep_send_command( COMMAND_SYSTEM | SYSTEM_TIMEREMAINING, &wpd_socket );
-      keep_send_command_str( COMMAND_CPU | CPU_GOVERNOR, governor, &wpd_socket );
-		temp = keep_send_command( COMMAND_CPU | CPU_TEMP, &wpd_socket );
+		cur_rcap = keep_send_request(WPD_CMD(MODE_REQUEST,SYS_BATTERY,REMAINING_CAPACITY), &wpd_socket );
+		time_remaining = keep_send_request(WPD_CMD(MODE_REQUEST,SYS_SYSTEM,TIMEREMAINING), &wpd_socket );
+      keep_send_request_str(WPD_CMD(MODE_REQUEST,SYS_CPU,GOVERNOR), governor, &wpd_socket );
+		temp = keep_send_request(WPD_CMD(MODE_REQUEST,SYS_CPU,CPU_TEMP), &wpd_socket );
 
 		gkrellm_store_chartdata( freq_chart, max_frequency, cur_freq );
 		gkrellm_update_krell( freq_panel, freq_krell, cur_freq );
@@ -268,10 +268,10 @@ static void create_wpk( GtkWidget* box, gint first_create )
 		
 		temp_panel = gkrellm_panel_new0();
 	
-		cur_rate = keep_send_command( COMMAND_BATTERY | BATTERY_PRESENT_RATE, &wpd_socket );
-		battery_max_capacity = keep_send_command( COMMAND_BATTERY | BATTERY_MAX_CAPACITY, &wpd_socket );
+		cur_rate = keep_send_request(WPD_CMD(MODE_REQUEST,SYS_BATTERY,PRESENT_RATE), &wpd_socket );
+		battery_max_capacity = keep_send_request(WPD_CMD(MODE_REQUEST,SYS_BATTERY,MAX_CAPACITY), &wpd_socket );
 
-		n_frequencies = keep_send_command_array( COMMAND_CPU | CPU_AVAIL_FREQ, frequencies, &wpd_socket ) / 4;
+		n_frequencies = keep_send_request_array(WPD_CMD(MODE_REQUEST,SYS_CPU,AVAIL_FREQUENCIES), frequencies, &wpd_socket ) / 4;
 		max_frequency = -1;
 		min_frequency = 10000;
 		for (i=0; i < n_frequencies;i++ )
